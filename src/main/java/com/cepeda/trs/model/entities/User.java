@@ -1,23 +1,23 @@
 package com.cepeda.trs.model.entities;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
-/**
- *
- * @author CyborgK27
- */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@SuperBuilder
 @Builder(access = AccessLevel.PUBLIC)
-public class User extends BaseEntity {
-    String username;
-    String email;
-    String password;
+@Entity
+public class User extends BaseEntity<Integer> {
     
-    int roleId;
-    Role role;
+    private String username;
+    private String email;
+    private String password;
+    
+    private int roleId;
+    
+    @ManyToOne // Relación muchos a uno con Role
+    private Role role;
 }
