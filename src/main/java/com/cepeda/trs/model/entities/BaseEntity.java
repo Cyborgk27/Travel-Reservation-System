@@ -1,5 +1,6 @@
 package com.cepeda.trs.model.entities;
 
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -12,7 +13,10 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public abstract class BaseEntity {
-    public int id;
-    public int state;
+@MappedSuperclass
+public abstract class BaseEntity<T> {
+     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    protected int id;
+    protected int state;
 }
