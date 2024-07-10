@@ -1,13 +1,12 @@
 package com.cepeda.trs.model.persistence.interfaces;
 
 import com.cepeda.trs.model.entities.User;
-import java.util.concurrent.Future;
+import java.util.Optional;
 
 /**
  *
  * @author CyborgK27
  */
-public interface IUserRepository {
-    Future<User> login(String email, String password);
-    Future<Boolean> registerUser(User user);
+public interface IUserRepository extends IGenericRepository<User>{
+    Optional<User> login(String email, String password);
 }

@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.cepeda.trs.model.persistence.repositories;
 
 import com.cepeda.trs.model.entities.BaseEntity;
@@ -9,6 +5,7 @@ import com.cepeda.trs.model.persistence.interfaces.IGenericRepository;
 import com.cepeda.utiities.StateTypes;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,26 +13,46 @@ import java.util.Optional;
  *
  * @author CyborgK27
  */
-public class GenericRepository<T extends BaseEntity> implements IGenericRepository<T> {
+public class GenericRepository<T extends BaseEntity>
+        implements IGenericRepository<T> {
 
     @PersistenceContext
     private EntityManager _entityManager;
     private final Class<T> _entityClass;
 
+    // Consultas JPQL como constantes
+//    private static final String SELECT_ALL_QUERY = 
+//            "FROM %s e WHERE e.state != 0";
+//    private static final String SELECT_BY_ID_QUERY = 
+//            "FROM %s e WHERE e.id = :id AND e.state != 0";
+    private static final String SELECT_ALL_QUERY = "FROM %s e";
+    private static final String SELECT_BY_ID_QUERY = "FROM %s e WHERE e.id = :id";
+
     public GenericRepository(Class<T> entityClass) {
         _entityClass = entityClass;
     }
 
+    public void setEntityManager(EntityManager entityManager) {
+        this._entityManager = entityManager;
+    }
+
+    protected EntityManager getEntityManager() {
+        return _entityManager;
+    }
+
     @Override
     public List<T> getAll() {
-        return _entityManager.createQuery(
-                "from" + _entityClass.getName(),
-                _entityClass).getResultList();
+        String hql = String.format(SELECT_ALL_QUERY, _entityClass.getSimpleName());
+        TypedQuery<T> query = _entityManager.createQuery(hql, _entityClass);
+        return query.getResultList();
     }
 
     @Override
     public Optional<T> getById(int id) {
-        return Optional.ofNullable(_entityManager.find(_entityClass, id));
+        String hql = String.format(SELECT_BY_ID_QUERY, _entityClass.getSimpleName());
+        TypedQuery<T> query = _entityManager.createQuery(hql, _entityClass);
+        query.setParameter("id", id);
+        return query.getResultStream().findFirst();
     }
 
     @Override
@@ -77,7 +94,8 @@ public class GenericRepository<T extends BaseEntity> implements IGenericReposito
             entity.setState(StateTypes.INACTIVE.ordinal());
             try {
                 _entityManager.getTransaction().begin();
-                _entityManager.merge(entity); // Actualiza el estado en la base de datos
+                // Actualiza el estado en la base de datos
+                _entityManager.merge(entity);
                 _entityManager.getTransaction().commit();
                 return true;
             } catch (Exception e) {
