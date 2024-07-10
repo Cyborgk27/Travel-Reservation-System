@@ -1,6 +1,11 @@
 package com.cepeda.trs.model.entities;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import lombok.*;
 
 /**
@@ -11,14 +16,20 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @Builder(access = AccessLevel.PUBLIC)
-public class Travel extends BaseEntity {
+@Entity
+@Table(name = "Travels")
+public class Travel extends BaseEntity<Integer> implements Serializable {
+
+    public Travel() {
+    }
+    
     String codeTravel;
     String destination;
     LocalDate travelDate;
     LocalDate returnDate;
-    int avaliablPlaces;
+    int avaliablePlaces;
     float price;
     
-    int agencyId;
-    Agency agency;
+    @ManyToOne
+    User user;
 }
