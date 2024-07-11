@@ -6,7 +6,6 @@ import com.cepeda.trs.services.AgencyService;
 import com.cepeda.trs.view.JpAgency;
 import com.cepeda.trs.view.RegisterTravel;
 import com.cepeda.utiities.DateUtils;
-import com.cepeda.utiities.RenderTable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,8 +60,8 @@ public class AgencyController {
     private void saveTravel(RegisterTravel rt) {
         var travel = createTravel();
         if (_agencyService.createTravel(travel, _user)) {
-            JOptionPane.showMessageDialog(null,
-                    "Su viaje se ha guardado con éxito");
+//            JOptionPane.showMessageDialog(null,
+//                    "Su viaje se ha guardado con éxito");
             fillTable();
         } else {
 //            JOptionPane.showMessageDialog(null,
@@ -110,6 +109,7 @@ public class AgencyController {
             tableModel.addRow(row);
         }
         table.setModel(tableModel);
+        _view.lblTravels.setText(travels.size()+"");
     }
 
     private String getStateString(int state) {
@@ -150,8 +150,8 @@ public class AgencyController {
 
     private int getSelectRowUserId(JTable table) {
         int CELL = 0;
-        int FIRST_ROW = 0;
-        Object firstCellValue = table.getValueAt(FIRST_ROW, CELL);
+        int SELECT_ROW = table.getSelectedRow();
+        Object firstCellValue = table.getValueAt(SELECT_ROW, CELL);
         
         return (Integer) firstCellValue;
     }
